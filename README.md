@@ -1,6 +1,12 @@
+This is a *Backbone.js* + *Django* testing application. This is the first alpha with a very crude API implementation. Ideally, the API it should be rewritten with [django-tastypie](http://django-tastypie.readthedocs.org/en/latest/index.html), consider that this version was just a testbed. 
+
 ![Bookmarkly.com](http://bookmarkly.com/images/homeshot.png)
 
-This repository contains the code behind [Bookmarkly](http://bookmarkly.com), a bookmark organizer built with [Backbone.js](http://backbonejs.org/) in the browser and [Node.js](http://nodejs.org/) on the server with data persisted to MySQL.
+This repository contains a fork of the code behind [Bookmarkly](http://bookmarkly.com), a bookmark organizer built with [Backbone.js](http://backbonejs.org/).
+
+Originally, the server side was buid with [Node.js](http://nodejs.org/), however, this fork replaces it with Python/[Django](https://www.djangoproject.com).
+
+
 
 Some features:
 
@@ -15,21 +21,18 @@ Some features:
 
 1. Clone this repository
 
-2. Install [Node.js](http://nodejs.org/) and [NPM](http://npmjs.org/)
+2. Run `bootstrap_venv.sh` to initialise a virtual environment
 
-3. Install [Redis](http://redis.io/download) (for session storage)
+3. Configure your local settings in `app/settings/local.py`
 
-4. Install dependencies: `npm install -d`
+4. Initialise database `./manage.py syncdb`
 
-5. Create a MySQL database with the 3 tables in `schema.sql`
+5. Run `./manage.py runserver` and browse to `http://localhost:8000`
 
-6. Edit the configuration section of `server.js` to point to your database
 
-7. Run `node server.js` and browse to `http://localhost:3000`
-
-If you get an error from express on launch, you may need to `npm install connect@0.5.10`
 
 ## License
+The backend in `app` by Oleksandr Pryymak, 2012. The frontend in `public` and the idea behind all API calls in `app` by (the original licence):
 
 Copyright (c) 2012 Dan Grossman. All rights reserved.
 
@@ -40,7 +43,3 @@ Redistribution and use in source and binary forms, with or without modification,
 * Neither the name of the author nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-## TODO
-
-The screenshot generating server is currently a separate repository that I have not yet released.
