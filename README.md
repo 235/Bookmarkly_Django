@@ -1,11 +1,10 @@
-This is a *Backbone.js* + *Django* testing application. This is the first alpha with a very crude API implementation. Ideally, the API it should be rewritten with [django-tastypie](http://django-tastypie.readthedocs.org/en/latest/index.html), consider that this version was just a testbed. 
+This is a **Backbone.js** + **Django** testing application. This is the first alpha with a very crude API implementation. Ideally, the API it should be rewritten with [django-tastypie](http://django-tastypie.readthedocs.org/en/latest/index.html), but that will require changes of the front-end as well. Consider that this version was just a testbed. 
 
 ![Bookmarkly.com](http://bookmarkly.com/images/homeshot.png)
 
 This repository contains a fork of the code behind [Bookmarkly](http://bookmarkly.com), a bookmark organizer built with [Backbone.js](http://backbonejs.org/).
 
-Originally, the server side was buid with [Node.js](http://nodejs.org/), however, this fork replaces it with Python/[Django](https://www.djangoproject.com).
-
+Originally, the server side was buid with [Node.js](http://nodejs.org/), however, this fork replaces it with Python/[Django](https://www.djangoproject.com) (based on this [django template](https://github.com/lincolnloop/django-layout), you can borrow other scripts there).
 
 
 Some features:
