@@ -41,7 +41,8 @@ def update(request):
         form = RegisterForm(formdata)
         if form.is_valid():
             user = request.user
-            user.username, user.email, user.password = form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password']
+            user.username, user.email = form.cleaned_data['username'], form.cleaned_data['email']
+            user.set_password(form.cleaned_data['password'])
             user.save()
         else:
             #TBD: show errors
