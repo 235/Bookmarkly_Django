@@ -16,14 +16,14 @@ def collect_item_create(request):
     formdata = request.POST.keys()[0]
     formdata = json.loads(formdata)
 
-    item = CollectItem(user=User.objects.get(pk=request.user.id),
+    item = CollectItem(user=request.user,
                        url=formdata['url'],
                        title=formdata['title'],
                        description=formdata['description'])
     item.save()
 
     for t in formdata['tags']:
-        CollectTag(item=item, tag=t).save()
+        CollectTag(user=request.user, item=item, tag=t).save()
     #serializers.serialize('json', [item, ])  # no, I don't want to expose all fiels
 
     formdata['id'] = item.id  # Add ID field to identify a new item on frontend
@@ -32,14 +32,14 @@ def collect_item_create(request):
 
 def collect_item_delete(request, id):
     """ Delete item """
-    CollectItem.objects.filter(user=User.objects.get(pk=request.user.id), id=id).delete()
+    CollectItem.objects.filter(user=request.user, id=id).delete()
     return HttpResponse('', content_type="application/json")
 
 
 def collect_item_update(request, id):
     """ Update item """
     try:
-        item = CollectItem.objects.filter(user=User.objects.get(pk=request.user.id)).get(id=id)
+        item = CollectItem.objects.filter(user=request.user).get(id=id)
     except CollectItem.DoesNotExist:
         return HttpResponse("{'error': 'The Item that is being updated does not exist!'}", status=400, content_type="application/json")
 
@@ -50,7 +50,7 @@ def collect_item_update(request, id):
 
     CollectTag.objects.filter(item=item).delete()
     for t in formdata['tags']:
-        tag = CollectTag(item=item, tag=t)
+        tag = CollectTag(user=request.user, item=item, tag=t)
         tag.save()
 
     formdata['id'] = item.id
@@ -60,15 +60,15 @@ def collect_item_update(request, id):
 def collect_items_get(request):
     """ Get items """
     if 'tag' in request.GET:  # Form a Queryset
-        tags = CollectTag.objects.select_related().filter(tag__exact=request.GET['tag'])
+        tags = CollectTag.objects.select_related().filter(tag__exact=request.GET['tag'], user__exact=request.user)
         collection = [t.item for t in tags]
-    elif 'search' in request.GET:
+    elif 'search' in request.GET:  # does not work for sqllite
         search = request.GET['search']
-        collection = CollectItem.objects.filter(user=User.objects.get(pk=request.user.id))\
+        collection = CollectItem.objects.filter(user=request.user)\
                     .filter(Q(url__search=search) | Q(title__search=search) | Q(description__search=search))\
                     .order_by('-timestamp')
     else:
-        collection = CollectItem.objects.filter(user=User.objects.get(pk=request.user.id))\
+        collection = CollectItem.objects.filter(user=request.user)\
                     .order_by('-timestamp')
 
     if 'offset' in request.GET:
@@ -118,8 +118,8 @@ def collect_items(request):
 @login_required
 def collect_tags(request):
     """ Retrieve a user's tags """
-    #TBD: retrive tags only of a current user, not for all users!
-    tags = CollectTag.objects.values('tag').annotate(Count('tag')).order_by('-tag__count')
+    tags = CollectTag.objects.filter(user__exact=request.user)\
+           .values('tag').annotate(Count('tag')).order_by('-tag__count')
     response = [{'tag': t['tag'], 'count': t['tag__count']}\
                 for t in tags]
     return HttpResponse(json.dumps(response), content_type="application/json")
@@ -132,10 +132,9 @@ def autocomplete(request):
         term = request.GET['term']
     except KeyError:
         return HttpResponse(json.dumps({}), status=400, content_type="application/json")
-    #TBD: retrive tags only of a current user, not for all users!
-    #tags = CollectTag.objects.values('tag').distinct('tag').filter(tag__icontains=term)
-    tags = CollectTag.objects.values('tag').filter(tag__icontains=term)
+    #tags = CollectTag.objects.values('tag').distinct('tag').filter(tag__icontains=term, user__exact=request.user)  # for advanced DB
+    tags = CollectTag.objects.values('tag').filter(tag__icontains=term, user__exact=request.user)  # for sqllite
     response = [t['tag'] for t in tags]
     #TBD: turn on distinct for MySQL, remove manual
-    response = list(set(response))
+    response = list(set(response))  # for sqllite
     return HttpResponse(json.dumps(response), content_type="application/json")

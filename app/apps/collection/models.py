@@ -27,6 +27,7 @@ class CollectItem(models.Model):
 
 
 class CollectTag(models.Model):
+    user        = models.ForeignKey(User)
     item        = models.ForeignKey(CollectItem)
     tag         = models.CharField(max_length=255)
 

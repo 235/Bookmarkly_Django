@@ -11,10 +11,9 @@ def index(request):
         Cannot use django templates due to a conflict with javascript,
         no way to solve this in django v1.4 """
     try:
-        user = User.objects.get(pk=request.user.id)
-        response = {'id': user.id, 'username': user.username, 'email': user.email}
+        response = {'id': request.user.id, 'username': request.user.username, 'email': request.user.email}
         init = "$(document).ready(function() { App.user = " + json.dumps(response) + "; App.initialize(); });"
-    except User.DoesNotExist:
+    except AttributeError:  # better than another query and checking User.DoesNotExist. AnonymousUser does not have those fields
         init = "$(document).ready(function() { App.initialize(); });"
 
     filename = os.path.join(settings.STATIC_ROOT, 'templates/index.html')

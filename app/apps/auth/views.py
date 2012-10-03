@@ -40,7 +40,7 @@ def update(request):
         formdata = dict([(x, y[0]) for x, y in formdata.iteritems()])
         form = RegisterForm(formdata)
         if form.is_valid():
-            user = User.objects.get(pk=request.user.id)
+            user = request.user
             user.username, user.email, user.password = form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password']
             user.save()
         else:
