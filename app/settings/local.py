@@ -8,7 +8,7 @@ your code repository.
 """
 from app.settings.base import *   # pylint: disable=W0614,W0401
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
