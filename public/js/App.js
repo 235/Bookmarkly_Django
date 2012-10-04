@@ -2,6 +2,7 @@ var App = {
 
     initialize: function() {
 
+        //Make Backbone to send queries with CSRF header, in this case for Django
         $.ajaxSetup({
             beforeSend: function(xhr, settings) {
                 function getCookie(name) {
