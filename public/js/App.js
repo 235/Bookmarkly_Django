@@ -1,7 +1,32 @@
 var App = {
 
     initialize: function() {
-        
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            // Does this cookie string begin with the name we want?
+                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    // Only send the token to relative URLs i.e. locally.
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+            }
+        });
+
+
         //If Backbone sync gets an unauthorized header, it means the user's
         //session has expired, so send them back to the homepage
         var sync = Backbone.sync;
@@ -10,10 +35,10 @@ var App = {
                 if (xhr.status == 401) {
                     window.location = '/';
                 }
-            }
+            };
             sync(method, model, options);
-        };        
-        
+        };
+
         this.router = new BookmarklyRouter();
         Backbone.history.start({pushState: true});
 
@@ -21,10 +46,10 @@ var App = {
         $(window).resize(function() {
             self.resizeHeader();
         });
-        this.resizeHeader();      
-        
+        this.resizeHeader();
+
     },
-    
+
     resizeHeader: function() {
         setTimeout(function() {
             var el = $('#app div:first');
@@ -37,5 +62,5 @@ var App = {
             }
         }, 1000);
     }
-    
+
 };
