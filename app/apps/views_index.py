@@ -1,11 +1,13 @@
-from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.conf import settings
 import json
 import os
 import re
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 
+#It's better to enforse CSRF cookies globally that just here. If we'll have new points of entrace to the sevice, a user may not get the cookie
+@ensure_csrf_cookie
 def index(request):
     """ Render index page with information about User.
         Cannot use django templates due to a conflict with javascript,
