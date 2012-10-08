@@ -13,8 +13,7 @@ import time
 def collect_item_create(request):
     """ Create item """
     #TBD: fix this dirty hack! Also, cannot use forms since we have a list value and data not in proper format
-    formdata = request.POST.keys()[0]
-    formdata = json.loads(formdata)
+    formdata = json.loads(request.body)
 
     item = CollectItem(user=request.user,
                        url=formdata['url'],
