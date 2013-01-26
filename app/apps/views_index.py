@@ -34,7 +34,7 @@ def bundle(request, scripts, path):
         content += "\n/**\n* " + fl + ".js\n*/\n\n" + fstatic.read() + "\n\n"
         fstatic.close()
     #TBD: comression & caching
-    return HttpResponse(content)
+    return HttpResponse(content, content_type='text/javascript')
 
 
 def templates(request, templates, path):
@@ -49,4 +49,4 @@ def templates(request, templates, path):
         html = re.sub("'", "\\'", html)
         content += "Templates." + fl + " = '" + html + "';\n"
         fstatic.close()
-    return HttpResponse(content)
+    return HttpResponse(content, content_type='text/javascript')

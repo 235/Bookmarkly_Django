@@ -1,14 +1,14 @@
 from django.http import HttpResponse
 #from django.core import serializers
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.forms.models import model_to_dict
 from django.db.models import Count, Q
 from models import CollectItem, CollectTag
 import json
 import time
 
 
-# TBD: rewrite to django-piston later
+# TBD: rewrite to django-rest-framework.org  later
 
 def collect_item_create(request):
     """ Create item """
@@ -78,16 +78,12 @@ def collect_items_get(request):
 
     items = []
     for i in collection:
+        items.append(model_to_dict(i))  # , fields=[], exclude=[]) )
+        items[-1]['timestamp'] = time.mktime(i.timestamp.timetuple()),
         tags = CollectTag.objects.filter(item=i).all()
-        items.append({'id': i.id,
-                      'url': i.url,
-                      'title': i.title,
-                      'description': i.description,
-                      'timestamp': time.mktime(i.timestamp.timetuple()),
-                      'tags': [t.tag for t in tags]
-                    })
+        items[-1]['tags'] = [t.tag for t in tags]
     #TBD: cache control
-    return HttpResponse(json.dumps(items), content_type="application/json")
+    return HttpResponse(json.dumps(items, default=dthandler), content_type="application/json")
 
 
 @login_required
